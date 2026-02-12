@@ -1,0 +1,1035 @@
+/*
+Theme Name: SaaS Flow
+Theme URI: https://example.com/saas-flow
+Author: SaaS Flow Team
+Author URI: https://example.com
+Description: A lightweight, high-performance WordPress theme with modern scrolling behaviors, sticky scrollytelling, glassmorphism navbar, and bento grid layouts. Built with pure PHP, CSS Variables, and Vanilla JavaScript — no heavy frameworks.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: saas-flow
+Tags: one-column, custom-menu, featured-images, full-width-template, theme-options
+*/
+
+/* ==========================================================================
+   0. CSS RESET (Modern)
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES (Design Tokens)
+   ========================================================================== */
+
+:root {
+    /* — Colors — */
+    --color-primary: #6c5ce7;
+    --color-primary-light: #a29bfe;
+    --color-primary-dark: #4a3db5;
+    --color-secondary: #00cec9;
+    --color-secondary-light: #81ecec;
+    --color-accent: #fd79a8;
+
+    --color-bg: #0a0a1a;
+    --color-bg-alt: #111128;
+    --color-bg-card: #16163a;
+    --color-bg-card-hover: #1e1e4a;
+
+    --color-text: #e2e2f0;
+    --color-text-muted: #8888a8;
+    --color-text-heading: #ffffff;
+
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-hover: rgba(255, 255, 255, 0.16);
+
+    --color-glass-bg: rgba(10, 10, 26, 0.72);
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+
+    /* — Typography — */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+    --fs-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --fs-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    --fs-base: clamp(1rem, 0.9rem + 0.45vw, 1.125rem);
+    --fs-lg: clamp(1.125rem, 1rem + 0.55vw, 1.35rem);
+    --fs-xl: clamp(1.35rem, 1.1rem + 1vw, 1.75rem);
+    --fs-2xl: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+    --fs-3xl: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);
+    --fs-4xl: clamp(2.75rem, 1.6rem + 4.5vw, 5rem);
+
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    --lh-tight: 1.15;
+    --lh-snug: 1.3;
+    --lh-normal: 1.6;
+
+    /* — Spacing — */
+    --space-2xs: clamp(0.25rem, 0.2rem + 0.2vw, 0.375rem);
+    --space-xs: clamp(0.5rem, 0.4rem + 0.4vw, 0.75rem);
+    --space-sm: clamp(0.75rem, 0.6rem + 0.6vw, 1rem);
+    --space-md: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
+    --space-lg: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+    --space-xl: clamp(2rem, 1.5rem + 2vw, 3rem);
+    --space-2xl: clamp(3rem, 2rem + 3.5vw, 5rem);
+    --space-3xl: clamp(4rem, 2.5rem + 5vw, 7rem);
+    --space-section: clamp(5rem, 3rem + 7vw, 10rem);
+
+    /* — Layout — */
+    --container-max: 1280px;
+    --container-narrow: 800px;
+    --container-wide: 1440px;
+    --container-padding: clamp(1rem, 3vw, 2rem);
+
+    /* — Borders & Radius — */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    --radius-full: 9999px;
+
+    /* — Shadows — */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 40px rgba(108, 92, 231, 0.2);
+
+    /* — Transitions — */
+    --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition-fast: 200ms var(--ease-out);
+    --transition-base: 350ms var(--ease-out);
+    --transition-slow: 600ms var(--ease-in-out);
+
+    /* — Z-Index Scale — */
+    --z-base: 1;
+    --z-sticky: 100;
+    --z-nav: 1000;
+    --z-overlay: 2000;
+    --z-modal: 3000;
+
+    /* — Navbar — */
+    --nav-height: 72px;
+}
+
+/* ==========================================================================
+   2. BASE STYLES
+   ========================================================================== */
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-normal);
+    line-height: var(--lh-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    color: var(--color-text-heading);
+}
+
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-2xl); }
+h4 { font-size: var(--fs-xl); }
+h5 { font-size: var(--fs-lg); }
+h6 { font-size: var(--fs-base); }
+
+p {
+    max-width: 65ch;
+}
+
+::selection {
+    background-color: var(--color-primary);
+    color: var(--color-text-heading);
+}
+
+/* ==========================================================================
+   3. UTILITY CLASSES
+   ========================================================================== */
+
+.sf-container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+}
+
+.sf-container--narrow {
+    max-width: var(--container-narrow);
+}
+
+.sf-container--wide {
+    max-width: var(--container-wide);
+}
+
+.sf-section {
+    padding-block: var(--space-section);
+}
+
+.sf-section__header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.sf-section__header p {
+    margin-inline: auto;
+}
+
+.sf-label {
+    display: inline-block;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primary-light);
+    margin-bottom: var(--space-sm);
+}
+
+.sf-gradient-text {
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.sf-btn:hover {
+    transform: translateY(-2px);
+}
+
+.sf-btn:active {
+    transform: translateY(0);
+}
+
+.sf-btn--primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(108, 92, 231, 0.35);
+}
+
+.sf-btn--primary:hover {
+    box-shadow: 0 6px 28px rgba(108, 92, 231, 0.5);
+}
+
+.sf-btn--outline {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border-hover);
+}
+
+.sf-btn--outline:hover {
+    border-color: var(--color-primary-light);
+    color: var(--color-primary-light);
+}
+
+/* Screen reader only */
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* ==========================================================================
+   4. NAVBAR
+   ========================================================================== */
+
+.sf-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    transition: background var(--transition-base), box-shadow var(--transition-base), backdrop-filter var(--transition-base);
+    background: transparent;
+}
+
+.sf-navbar.is-scrolled {
+    background: var(--color-glass-bg);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid var(--color-glass-border);
+    box-shadow: var(--shadow-md);
+}
+
+.sf-navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sf-navbar__brand {
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-heading);
+    letter-spacing: -0.02em;
+}
+
+.sf-navbar__brand span {
+    color: var(--color-primary-light);
+}
+
+.sf-navbar__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.sf-navbar__menu a {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+    position: relative;
+}
+
+.sf-navbar__menu a:hover,
+.sf-navbar__menu a.current-menu-item > a {
+    color: var(--color-text-heading);
+}
+
+.sf-navbar__menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--color-primary-light);
+    border-radius: 1px;
+    transition: width var(--transition-fast);
+}
+
+.sf-navbar__menu a:hover::after {
+    width: 100%;
+}
+
+.sf-navbar__cta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* Mobile hamburger */
+.sf-navbar__toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xs);
+}
+
+.sf-navbar__toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-text-heading);
+    border-radius: 2px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.sf-navbar__toggle.is-active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.sf-navbar__toggle.is-active span:nth-child(2) {
+    opacity: 0;
+}
+
+.sf-navbar__toggle.is-active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ==========================================================================
+   5. HERO SECTION
+   ========================================================================== */
+
+.sf-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: var(--nav-height) var(--container-padding) var(--space-2xl);
+}
+
+.sf-hero__video-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.sf-hero__video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sf-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(10, 10, 26, 0.6) 0%,
+        rgba(10, 10, 26, 0.85) 70%,
+        var(--color-bg) 100%
+    );
+    z-index: 1;
+}
+
+.sf-hero__content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 850px;
+}
+
+.sf-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-2xs) var(--space-md);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    color: var(--color-primary-light);
+    background: rgba(108, 92, 231, 0.12);
+    border: 1px solid rgba(108, 92, 231, 0.25);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--space-lg);
+}
+
+.sf-hero__title {
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.03em;
+}
+
+.sf-hero__subtitle {
+    font-size: var(--fs-lg);
+    color: var(--color-text-muted);
+    margin-inline: auto;
+    margin-bottom: var(--space-xl);
+}
+
+.sf-hero__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   6. MARQUEE (Infinite Logo Scroll)
+   ========================================================================== */
+
+.sf-marquee {
+    padding-block: var(--space-2xl);
+    overflow: hidden;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-alt);
+}
+
+.sf-marquee__label {
+    text-align: center;
+    margin-bottom: var(--space-lg);
+}
+
+.sf-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: sf-marquee-scroll 30s linear infinite;
+}
+
+.sf-marquee:hover .sf-marquee__track {
+    animation-play-state: paused;
+}
+
+.sf-marquee__group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xl);
+    padding-inline: var(--space-xl);
+    flex-shrink: 0;
+}
+
+.sf-marquee__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+
+.sf-marquee__item:hover {
+    opacity: 1;
+}
+
+.sf-marquee__item svg {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+@keyframes sf-marquee-scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* ==========================================================================
+   7. STICKY SCROLLYTELLING SECTION
+   ========================================================================== */
+
+.sf-scrollytelling {
+    padding-block: var(--space-section);
+}
+
+.sf-scrollytelling__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2xl);
+}
+
+.sf-scrollytelling__sidebar {
+    position: sticky;
+    top: 100px;
+    flex: 0 0 40%;
+    max-width: 40%;
+}
+
+.sf-scrollytelling__sidebar-content {
+    padding-right: var(--space-xl);
+}
+
+.sf-scrollytelling__title {
+    margin-bottom: var(--space-md);
+}
+
+.sf-scrollytelling__description {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-lg);
+}
+
+.sf-scrollytelling__features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.sf-scrollytelling__feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+}
+
+.sf-scrollytelling__feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--color-primary-light);
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.sf-scrollytelling__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.sf-scrollytelling__card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.sf-scrollytelling__card:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+}
+
+.sf-scrollytelling__card-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+    color: #fff;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    margin-bottom: var(--space-md);
+}
+
+.sf-scrollytelling__card-title {
+    font-size: var(--fs-xl);
+    margin-bottom: var(--space-sm);
+}
+
+.sf-scrollytelling__card-text {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+}
+
+.sf-scrollytelling__card-image {
+    width: 100%;
+    height: 200px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.sf-scrollytelling__card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   8. BENTO GRID
+   ========================================================================== */
+
+.sf-bento {
+    padding-block: var(--space-section);
+    background: var(--color-bg-alt);
+}
+
+.sf-bento__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    gap: var(--space-md);
+}
+
+.sf-bento__item {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+}
+
+.sf-bento__item:hover {
+    border-color: var(--color-border-hover);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* Asymmetric grid placement */
+.sf-bento__item--wide {
+    grid-column: span 2;
+}
+
+.sf-bento__item--tall {
+    grid-row: span 2;
+}
+
+.sf-bento__item--featured {
+    grid-column: span 2;
+    grid-row: span 2;
+    background: linear-gradient(135deg, var(--color-bg-card), rgba(108, 92, 231, 0.08));
+}
+
+.sf-bento__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+    font-size: 24px;
+}
+
+.sf-bento__icon--purple {
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--color-primary-light);
+}
+
+.sf-bento__icon--teal {
+    background: rgba(0, 206, 201, 0.15);
+    color: var(--color-secondary);
+}
+
+.sf-bento__icon--pink {
+    background: rgba(253, 121, 168, 0.15);
+    color: var(--color-accent);
+}
+
+.sf-bento__item-title {
+    font-size: var(--fs-xl);
+    margin-bottom: var(--space-xs);
+}
+
+.sf-bento__item-text {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+}
+
+.sf-bento__item-visual {
+    margin-top: var(--space-lg);
+    width: 100%;
+    height: 120px;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+/* ==========================================================================
+   9. SCROLL ANIMATIONS
+   ========================================================================== */
+
+.sf-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+
+.sf-animate--left {
+    transform: translateX(-30px);
+}
+
+.sf-animate--right {
+    transform: translateX(30px);
+}
+
+.sf-animate--scale {
+    transform: scale(0.95);
+}
+
+.sf-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0) translateX(0) scale(1);
+}
+
+/* Stagger children */
+.sf-stagger > .sf-animate:nth-child(1) { transition-delay: 0ms; }
+.sf-stagger > .sf-animate:nth-child(2) { transition-delay: 80ms; }
+.sf-stagger > .sf-animate:nth-child(3) { transition-delay: 160ms; }
+.sf-stagger > .sf-animate:nth-child(4) { transition-delay: 240ms; }
+.sf-stagger > .sf-animate:nth-child(5) { transition-delay: 320ms; }
+.sf-stagger > .sf-animate:nth-child(6) { transition-delay: 400ms; }
+
+/* ==========================================================================
+   10. FOOTER
+   ========================================================================== */
+
+.sf-footer {
+    background: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-2xl);
+}
+
+.sf-footer__widgets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl);
+    padding-bottom: var(--space-2xl);
+}
+
+.sf-footer__widget-title {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-heading);
+    margin-bottom: var(--space-md);
+}
+
+.sf-footer__widget ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.sf-footer__widget a {
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+}
+
+.sf-footer__widget a:hover {
+    color: var(--color-primary-light);
+}
+
+.sf-footer__bottom {
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.sf-footer__copyright {
+    font-size: var(--fs-xs);
+    color: var(--color-text-muted);
+}
+
+.sf-footer__social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.sf-footer__social a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text-muted);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.sf-footer__social a:hover {
+    background: var(--color-primary);
+    color: #fff;
+}
+
+/* ==========================================================================
+   11. RESPONSIVE MEDIA QUERIES
+   ========================================================================== */
+
+/* Tablet and below */
+@media (max-width: 1024px) {
+    .sf-bento__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sf-bento__item--featured {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+
+    .sf-footer__widgets {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile breakpoint */
+@media (max-width: 768px) {
+    /* Navbar mobile */
+    .sf-navbar__toggle {
+        display: flex;
+    }
+
+    .sf-navbar__menu {
+        position: fixed;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-xl);
+        background: var(--color-glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition-base), visibility var(--transition-base);
+    }
+
+    .sf-navbar__menu.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sf-navbar__menu a {
+        font-size: var(--fs-xl);
+    }
+
+    .sf-navbar__cta {
+        display: none;
+    }
+
+    /* Hero mobile */
+    .sf-hero {
+        min-height: 85vh;
+    }
+
+    .sf-hero__actions {
+        flex-direction: column;
+    }
+
+    /* Scrollytelling mobile — disable sticky */
+    .sf-scrollytelling__inner {
+        flex-direction: column;
+    }
+
+    .sf-scrollytelling__sidebar {
+        position: static;
+        flex: none;
+        max-width: 100%;
+        margin-bottom: var(--space-xl);
+    }
+
+    .sf-scrollytelling__sidebar-content {
+        padding-right: 0;
+    }
+
+    /* Bento mobile */
+    .sf-bento__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sf-bento__item--wide,
+    .sf-bento__item--featured {
+        grid-column: span 1;
+    }
+
+    .sf-bento__item--tall,
+    .sf-bento__item--featured {
+        grid-row: span 1;
+    }
+
+    /* Footer mobile */
+    .sf-footer__widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .sf-footer__bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .sf-hero__badge {
+        font-size: var(--fs-xs);
+    }
+
+    .sf-marquee__group {
+        gap: var(--space-lg);
+    }
+}
