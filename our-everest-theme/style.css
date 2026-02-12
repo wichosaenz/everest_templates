@@ -1,0 +1,841 @@
+/*
+Theme Name: Our Everest Theme
+Theme URI: https://example.com/our-everest-theme
+Author: Everest Team
+Author URI: https://example.com
+Description: A minimalist, light-mode WordPress theme with dynamic one-page scrollytelling. Content is driven entirely by Child Pages — no hardcoded HTML. Supports Customizer color picks, custom logos, sticky split layouts, and IntersectionObserver scroll animations.
+Version: 2.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: our-everest
+Tags: one-column, custom-menu, custom-logo, featured-images, theme-options, translation-ready
+*/
+
+/* ==========================================================================
+   0. RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100vh;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+/* ==========================================================================
+   1. DESIGN TOKENS (CSS Custom Properties)
+   Defaults here are overridden by the Customizer inline styles.
+   ========================================================================== */
+
+:root {
+    /* — Colors (Customizer-driven) — */
+    --primary-color: #2563eb;
+    --body-bg-color: #ffffff;
+    --text-color: #333333;
+
+    /* — Derived Colors — */
+    --primary-light: color-mix(in srgb, var(--primary-color) 15%, white);
+    --primary-dark: color-mix(in srgb, var(--primary-color) 85%, black);
+    --heading-color: #111111;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --border-color-hover: #d1d5db;
+    --surface-color: #f9fafb;
+    --surface-alt: #f3f4f6;
+    --white: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.06);
+
+    /* — Typography — */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --fs-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.8125rem);
+    --fs-sm: clamp(0.8125rem, 0.75rem + 0.3vw, 0.9375rem);
+    --fs-base: clamp(0.9375rem, 0.875rem + 0.3vw, 1.0625rem);
+    --fs-lg: clamp(1.0625rem, 0.95rem + 0.5vw, 1.25rem);
+    --fs-xl: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+    --fs-2xl: clamp(1.625rem, 1.2rem + 1.6vw, 2.375rem);
+    --fs-3xl: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+    --fs-4xl: clamp(2.5rem, 1.5rem + 3.5vw, 4.25rem);
+
+    --fw-normal: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    --lh-tight: 1.2;
+    --lh-snug: 1.35;
+    --lh-normal: 1.7;
+
+    /* — Spacing — */
+    --space-2xs: clamp(0.25rem, 0.2rem + 0.15vw, 0.375rem);
+    --space-xs: clamp(0.5rem, 0.4rem + 0.3vw, 0.75rem);
+    --space-sm: clamp(0.75rem, 0.6rem + 0.5vw, 1rem);
+    --space-md: clamp(1rem, 0.85rem + 0.6vw, 1.5rem);
+    --space-lg: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    --space-xl: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+    --space-2xl: clamp(3rem, 2rem + 3vw, 5rem);
+    --space-3xl: clamp(4rem, 2.5rem + 4.5vw, 7rem);
+    --space-section: clamp(4.5rem, 3rem + 5vw, 8rem);
+
+    /* — Layout — */
+    --container-max: 1200px;
+    --container-narrow: 760px;
+    --container-wide: 1400px;
+    --container-padding: clamp(1rem, 3vw, 2rem);
+
+    /* — Borders & Radius — */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* — Shadows — */
+    --shadow-xs: 0 1px 2px var(--shadow-color);
+    --shadow-sm: 0 1px 3px var(--shadow-color), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 4px 6px -1px var(--shadow-color), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -4px rgba(0, 0, 0, 0.03);
+    --shadow-xl: 0 20px 25px -5px var(--shadow-color), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+
+    /* — Transitions — */
+    --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+    --transition-fast: 180ms var(--ease-out);
+    --transition-base: 300ms var(--ease-out);
+    --transition-slow: 500ms var(--ease-in-out);
+
+    /* — Z-Index — */
+    --z-base: 1;
+    --z-sticky: 100;
+    --z-topbar: 900;
+    --z-nav: 1000;
+    --z-overlay: 2000;
+
+    /* — Navbar — */
+    --topbar-height: 40px;
+    --nav-height: 72px;
+}
+
+/* ==========================================================================
+   2. BASE TYPOGRAPHY
+   ========================================================================== */
+
+body {
+    font-family: var(--font-primary);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-normal);
+    line-height: var(--lh-normal);
+    color: var(--text-color);
+    background-color: var(--body-bg-color);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--fw-bold);
+    line-height: var(--lh-tight);
+    color: var(--heading-color);
+    letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-2xl); }
+h4 { font-size: var(--fs-xl); }
+h5 { font-size: var(--fs-lg); }
+h6 { font-size: var(--fs-base); font-weight: var(--fw-semibold); }
+
+p {
+    max-width: 68ch;
+    margin-bottom: var(--space-md);
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+::selection {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+/* ==========================================================================
+   3. UTILITIES
+   ========================================================================== */
+
+.oet-container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+}
+
+.oet-container--narrow {
+    max-width: var(--container-narrow);
+}
+
+.oet-container--wide {
+    max-width: var(--container-wide);
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+/* ==========================================================================
+   4. BUTTONS (WordPress content uses these)
+   ========================================================================== */
+
+.wp-block-button__link,
+.oet-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0.7em 1.8em;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    border: 2px solid transparent;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast),
+                border-color var(--transition-fast), transform var(--transition-fast),
+                box-shadow var(--transition-fast);
+}
+
+.wp-block-button__link:hover,
+.oet-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.wp-block-button__link:active,
+.oet-btn:active {
+    transform: translateY(0);
+}
+
+.wp-block-button__link,
+.oet-btn--primary {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.wp-block-button__link:hover,
+.oet-btn--primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.wp-block-button.is-style-outline .wp-block-button__link,
+.oet-btn--outline {
+    background-color: transparent;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.wp-block-button.is-style-outline .wp-block-button__link:hover,
+.oet-btn--outline:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+/* ==========================================================================
+   5. TOP BAR
+   ========================================================================== */
+
+.oet-topbar {
+    background-color: var(--heading-color);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--fs-xs);
+    height: var(--topbar-height);
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: var(--z-topbar);
+}
+
+.oet-topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.oet-topbar a {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color var(--transition-fast);
+}
+
+.oet-topbar a:hover {
+    color: var(--white);
+}
+
+.oet-topbar .widget {
+    margin: 0;
+}
+
+.oet-topbar .widget ul {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+/* ==========================================================================
+   6. NAVBAR
+   ========================================================================== */
+
+.oet-navbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--border-color);
+    transition: box-shadow var(--transition-base);
+}
+
+.oet-navbar.is-scrolled {
+    box-shadow: var(--shadow-md);
+}
+
+.oet-navbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo — supports square/round logos */
+.oet-navbar__brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.oet-navbar__brand .custom-logo-link {
+    display: flex;
+    align-items: center;
+}
+
+.oet-navbar__brand .custom-logo {
+    max-height: 48px;
+    width: auto;
+    border-radius: var(--radius-md);
+}
+
+.oet-navbar__brand-text {
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
+    color: var(--heading-color);
+    letter-spacing: -0.03em;
+}
+
+.oet-navbar__brand-text span {
+    color: var(--primary-color);
+}
+
+/* Menu */
+.oet-navbar__menu {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.oet-navbar__menu a {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+    position: relative;
+    padding-block: var(--space-2xs);
+}
+
+.oet-navbar__menu a:hover,
+.oet-navbar__menu a.current-menu-item {
+    color: var(--heading-color);
+}
+
+.oet-navbar__menu a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary-color);
+    border-radius: 1px;
+    transition: width var(--transition-fast);
+}
+
+.oet-navbar__menu a:hover::after {
+    width: 100%;
+}
+
+/* Mobile toggle */
+.oet-navbar__toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xs);
+}
+
+.oet-navbar__toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--heading-color);
+    border-radius: 2px;
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+}
+
+.oet-navbar__toggle.is-active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.oet-navbar__toggle.is-active span:nth-child(2) {
+    opacity: 0;
+}
+
+.oet-navbar__toggle.is-active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ==========================================================================
+   7. SCROLLY SECTIONS (Child Page Sections)
+   ========================================================================== */
+
+.scrolly-section {
+    padding-block: var(--space-section);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scrolly-section:last-child {
+    border-bottom: none;
+}
+
+/* Alternate background for visual rhythm */
+.scrolly-section:nth-child(even) {
+    background-color: var(--surface-color);
+}
+
+.scrolly-section__inner {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+}
+
+.scrolly-section__header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+}
+
+.scrolly-section__header h2 {
+    margin-bottom: var(--space-sm);
+}
+
+.scrolly-section__header p {
+    color: var(--text-muted);
+    font-size: var(--fs-lg);
+    margin-inline: auto;
+}
+
+/* WordPress block content inside sections */
+.scrolly-section__content {
+    max-width: var(--container-max);
+    margin-inline: auto;
+}
+
+/* WordPress alignments inside sections */
+.scrolly-section__content .alignwide {
+    max-width: var(--container-wide);
+    margin-inline: auto;
+}
+
+.scrolly-section__content .alignfull {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(-50vw + 50%);
+}
+
+/* WordPress gallery and image styling */
+.scrolly-section__content .wp-block-image img {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.scrolly-section__content .wp-block-gallery {
+    gap: var(--space-sm) !important;
+}
+
+.scrolly-section__content .wp-block-gallery .wp-block-image img {
+    border-radius: var(--radius-md);
+}
+
+.scrolly-section__content .wp-block-columns {
+    gap: var(--space-xl);
+}
+
+/* ==========================================================================
+   8. INTRO SECTION (Main Front Page Content)
+   ========================================================================== */
+
+.oet-intro {
+    padding-block: var(--space-3xl);
+    text-align: center;
+}
+
+.oet-intro__content {
+    max-width: var(--container-narrow);
+    margin-inline: auto;
+}
+
+.oet-intro__content h1,
+.oet-intro__content h2 {
+    margin-bottom: var(--space-md);
+}
+
+.oet-intro__content p {
+    font-size: var(--fs-lg);
+    color: var(--text-muted);
+    margin-inline: auto;
+}
+
+/* ==========================================================================
+   9. STICKY SPLIT LAYOUT (Scrollytelling)
+   Triggered when child page slug contains 'sticky'.
+   ========================================================================== */
+
+.is-sticky-split .scrolly-section__content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2xl);
+}
+
+.is-sticky-split .oet-sticky-sidebar {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-lg));
+    flex: 0 0 38%;
+    max-width: 38%;
+}
+
+/* Hide duplicate header when sticky sidebar shows it */
+.is-sticky-split .scrolly-section__header {
+    display: none;
+}
+
+.is-sticky-split .oet-sticky-sidebar h2 {
+    margin-bottom: var(--space-sm);
+}
+
+.is-sticky-split .oet-sticky-sidebar p {
+    color: var(--text-muted);
+}
+
+.is-sticky-split .oet-sticky-main {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Cards inside sticky section content */
+.is-sticky-split .oet-sticky-main .wp-block-group,
+.is-sticky-split .oet-sticky-main .wp-block-column {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.is-sticky-split .oet-sticky-main .wp-block-group:hover,
+.is-sticky-split .oet-sticky-main .wp-block-column:hover {
+    border-color: var(--border-color-hover);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ==========================================================================
+   10. SCROLL ANIMATIONS
+   ========================================================================== */
+
+.oet-animate {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+}
+
+.oet-animate.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children */
+.oet-stagger > .oet-animate:nth-child(1) { transition-delay: 0ms; }
+.oet-stagger > .oet-animate:nth-child(2) { transition-delay: 80ms; }
+.oet-stagger > .oet-animate:nth-child(3) { transition-delay: 160ms; }
+.oet-stagger > .oet-animate:nth-child(4) { transition-delay: 240ms; }
+.oet-stagger > .oet-animate:nth-child(5) { transition-delay: 320ms; }
+.oet-stagger > .oet-animate:nth-child(6) { transition-delay: 400ms; }
+
+/* ==========================================================================
+   11. FOOTER
+   ========================================================================== */
+
+.oet-footer {
+    background-color: var(--heading-color);
+    color: rgba(255, 255, 255, 0.7);
+    padding-top: var(--space-2xl);
+}
+
+.oet-footer a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color var(--transition-fast);
+}
+
+.oet-footer a:hover {
+    color: var(--white);
+}
+
+.oet-footer__widgets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-xl);
+    padding-bottom: var(--space-2xl);
+}
+
+.oet-footer__widget-title,
+.oet-footer .widget-title {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    margin-bottom: var(--space-md);
+}
+
+.oet-footer .widget ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.oet-footer .widget li a {
+    font-size: var(--fs-sm);
+}
+
+.oet-footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: var(--fs-xs);
+}
+
+.oet-footer__copyright-widget {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+/* ==========================================================================
+   12. WORDPRESS CORE BLOCK REFINEMENTS (Light Mode)
+   ========================================================================== */
+
+/* Separator */
+.wp-block-separator {
+    border-color: var(--border-color);
+    opacity: 1;
+}
+
+/* Quote */
+.wp-block-quote {
+    border-left: 4px solid var(--primary-color);
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--surface-color);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* Cover block text */
+.wp-block-cover {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+/* Table */
+.wp-block-table table {
+    width: 100%;
+}
+
+.wp-block-table td,
+.wp-block-table th {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.wp-block-table thead {
+    background-color: var(--surface-color);
+}
+
+/* ==========================================================================
+   13. RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .is-sticky-split .scrolly-section__content {
+        gap: var(--space-xl);
+    }
+
+    .is-sticky-split .oet-sticky-sidebar {
+        flex: 0 0 42%;
+        max-width: 42%;
+    }
+
+    .oet-footer__widgets {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Navbar mobile */
+    .oet-navbar__toggle {
+        display: flex;
+    }
+
+    .oet-navbar__menu {
+        position: fixed;
+        top: var(--nav-height);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-xl);
+        background-color: var(--white);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity var(--transition-base), visibility var(--transition-base);
+        z-index: var(--z-overlay);
+    }
+
+    .oet-navbar__menu.is-open {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .oet-navbar__menu a {
+        font-size: var(--fs-xl);
+    }
+
+    /* Topbar hide on very small */
+    .oet-topbar {
+        display: none;
+    }
+
+    /* Sticky split — stack vertically */
+    .is-sticky-split .scrolly-section__content {
+        flex-direction: column;
+    }
+
+    .is-sticky-split .oet-sticky-sidebar {
+        position: static;
+        flex: none;
+        max-width: 100%;
+        margin-bottom: var(--space-xl);
+    }
+
+    /* Footer */
+    .oet-footer__widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .oet-footer__bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .oet-intro {
+        padding-block: var(--space-2xl);
+    }
+}
